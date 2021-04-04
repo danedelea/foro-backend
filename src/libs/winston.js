@@ -5,7 +5,7 @@ const moment = require('moment');
 const formatLog = winston.format.combine(
     winston.format.simple(),
     winston.format.timestamp(),
-    winston.format.printf(info => `${formatLevel(info)} [${moment().format("DD-MM-YYYY | HH:mm:ss")}] [${path.basename(info.__filename)}] ${info.message}`)
+    winston.format.printf(info => `${formatLevel(info)} [${moment().format("DD-MM-YYYY | HH:mm:ss.SSS")}] [${path.basename(info.__filename)}] ${info.message}`)
 );
 
 const logger =

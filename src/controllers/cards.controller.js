@@ -15,11 +15,12 @@ CardCtrl.getCards = async (req, res) => {
         __filename
     });
     try {
-        let query = `SELECT * from Cards`;
-        logger.info(`Getting Cards... Executing query: "${query}"`, {
+        let query = `SELECT c.date, c.time, c.place, c.instagram, c.description, c.publication_date, (SELECT count(*) FROM comments c2 WHERE card_id = c.id) AS comments FROM cards c WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%Y-%m-%d") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
+
+        logger.info(`Getting cards for day "${req.params.date}"...`, {
             __filename
         });
-
+    
         bbdd.query(query, function (error, results, fields) {
             if (error) {
                 logger.error(`An error has ocurred getting the Cards. ${error}`, {
@@ -54,7 +55,7 @@ CardCtrl.createCard = async (req, res) => {
         newCard.publicationDate = moment().format("DD-MM-YYYY HH:mm:ss");
         console.log(newCard);
 
-        let query = `INSERT INTO Cards(date, time, place, instagram, description, comments, publication_date) VALUES("${newCard.date}", "${newCard.time}", "${newCard.place}", "${newCard.instagram}", "${newCard.description}", "${newCard.comments}", "${newCard.publicationDate}")`;
+        let query = `INSERT INTO Cards(date, time, place, instagram, descriptionn, comments, publication_date) VALUES("${newCard.date}", "${newCard.time}", "${newCard.place}", "${newCard.instagram}", "${newCard.description}", "${newCard.comments}", "${newCard.publicationDate}")`;
 
         logger.info(`Creating card... Executing query: "${query}"`, {
             __filename
@@ -85,8 +86,6 @@ CardCtrl.createCard = async (req, res) => {
             __filename
         });
     }
-
-
 };
 
 

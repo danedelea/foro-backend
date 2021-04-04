@@ -6,5 +6,6 @@ const authCtrl = require('../controllers/auth.controller');
 
 // /server/cards
 router.post('/createcard', cardsCtrl.createCard);
+router.get('/getcards/:date', cardsCtrl.getCards);
 
 module.exports = router;
