@@ -14,7 +14,7 @@ CardCtrl.getCards = async (req, res) => {
     });
 
     try {
-        let query = `SELECT c.id, c.date, c.time, c.place, c.instagram, c.description, publication_date as publicationDate, (SELECT count(*) FROM comments c2 WHERE card_id = c.id) AS comments FROM cards c WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
+        let query = `SELECT c.id, DATE_FORMAT(STR_TO_DATE(c.date, "%Y-%m-%d"), "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, publication_date, (SELECT count(*) FROM comments c2 WHERE card_id = c.id) AS comments FROM cards c WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
 
         logger.info(`Getting cards for day "${req.params.date}"...`, {
             __filename
@@ -50,7 +50,7 @@ CardCtrl.getMymyvCards = async (req, res) => {
     });
 
     try {
-        let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, publication_date as publicationDate, (SELECT count(*) FROM comments mc2 WHERE card_id = mc.id) AS comments FROM mymyv_cards mc WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
+        let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, publication_date, (SELECT count(*) FROM comments mc2 WHERE card_id = mc.id) AS comments FROM mymyv_cards mc WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
 
         logger.info(`Getting cards for day "${req.params.date}"...`, {
             __filename
@@ -113,10 +113,10 @@ CardCtrl.createCard = async (req, res) => {
     });
     try {
         var newCard = req.body;
-        newCard.publicationDate = moment().format("DD-MM-YYYY HH:mm:ss");
+        newCard.publication_date = moment().format("DD-MM-YYYY HH:mm:ss");
         newCard.publicated = 0;
 
-        let query = `INSERT INTO cards(date, time, place, instagram, description, publicated, publication_date) VALUES("${newCard.date}", "${newCard.time}", "${newCard.place}", "${newCard.instagram}", "${newCard.description}", "${newCard.publicated}", "${newCard.publicationDate}")`;
+        let query = `INSERT INTO cards(date, time, place, instagram, description, publicated, publication_date) VALUES("${newCard.date}", "${newCard.time}", "${newCard.place}", "${newCard.instagram}", "${newCard.description}", "${newCard.publicated}", "${newCard.publication_date}")`;
 
         logger.info(`Creating card... Executing query: "${query}"`, {
             __filename
@@ -155,10 +155,10 @@ CardCtrl.createMymyvCard = async (req, res) => {
     });
     try {
         var newMymyvCard = req.body;
-        newMymyvCard.publicationDate = moment().format("DD-MM-YYYY HH:mm:ss");
+        newMymyvCard.publication_date = moment().format("DD-MM-YYYY HH:mm:ss");
         newMymyvCard.publicated = 0;
 
-        let query = `INSERT INTO mymyv_cards(age, kind, look_for, instagram, description, publicated, publication_date) VALUES("${newMymyvCard.age}", "${newMymyvCard.kind}", "${newMymyvCard.lookFor}", "${newMymyvCard.instagram}", "${newMymyvCard.description}", "${newMymyvCard.publicated}", "${newMymyvCard.publicationDate}")`;
+        let query = `INSERT INTO mymyv_cards(age, kind, look_for, instagram, description, publicated, publication_date) VALUES("${newMymyvCard.age}", "${newMymyvCard.kind}", "${newMymyvCard.look_for}", "${newMymyvCard.instagram}", "${newMymyvCard.description}", "${newMymyvCard.publicated}", "${newMymyvCard.publication_date}")`;
 
         logger.info(`Creating mymyv card... Executing query: "${query}"`, {
             __filename
