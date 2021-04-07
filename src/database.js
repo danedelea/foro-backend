@@ -5,7 +5,8 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'tinder_unizar'
+    database: 'tinder_unizar',
+    charset: "utf8mb4"
 });
 
 module.exports = pool;
