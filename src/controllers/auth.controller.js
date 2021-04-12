@@ -26,7 +26,7 @@ authCtrl.getToken = async (req, res) => {
             if(results.length === 0){
                 logger.warn(`There isn't a user with the nick '${uncodeNick}'`, {__filename});
                 res.status(200).json({
-                    status: "NOK",
+                    status: keys.FAIL_RESULT,
                     message: `There isn't a user with the nick '${uncodeNick}'`
                 });   
                 return; 
@@ -41,7 +41,7 @@ authCtrl.getToken = async (req, res) => {
             logger.info(`Token obtained: "${token}"`, {__filename});
             // SEND THE TOKEN
             res.status(200).json({
-                status: "OK",
+                status: keys.SUCCESSFUL_RESULT,
                 message: token
             });
         });
@@ -62,14 +62,14 @@ authCtrl.verifyTokenExternal = (req, res) => {
         if (check) {
             logger.info(`(External) Token valid`, {__filename});
             res.status(200).json({
-                status: "OK",
+                status: keys.SUCCESSFUL_RESULT,
                 message: "Valid token"
             });
         }
     } catch (error) {
         logger.warn(`(External) Token not valid`, {__filename});
         res.status(200).json({
-            status: "NOK",
+            status: keys.FAIL_RESULT,
             message: "Invalid token"
         });
     }
@@ -85,7 +85,7 @@ authCtrl.verifyTokenInternal = (req, res, next) => {
         if (!req.headers[keys.TOKEN_HEADER] || !token || !jwt.verify(token, keys.SECRET_KEY_TOKEN)) {
             logger.warn(`Token not valid`, {__filename});
             return res.status(401).send({
-                status: "NOK",
+                status: keys.FAIL_RESULT,
                 message: "Unauthorized"
             });
         } else {
@@ -97,7 +97,7 @@ authCtrl.verifyTokenInternal = (req, res, next) => {
     } catch (error) {
         logger.warn(`(Internal) Token not valid`, {__filename});
         return res.status(401).send({
-            status: "NOK",
+            status: keys.FAIL_RESULT,
             message: "Unauthorized"
         });
     }

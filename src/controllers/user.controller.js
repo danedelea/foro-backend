@@ -126,7 +126,7 @@ userCtrl.updateUserPhoto = async (req, res) => {
             connection.release();
             console.log("Connection released");
             res.status(200).json({
-                status: "OK",
+                status: keys.SUCCESSFUL_RESULT,
                 message: "Photo uploaded"
             });
 
@@ -165,7 +165,7 @@ userCtrl.createUser = async (req, res) => {
                     __filename
                 });
                 res.status(400).json({
-                    status: "KO",
+                    status: keys.FAIL_RESULT,
                     message: "User does not created"
                 });
                 return;
@@ -175,7 +175,7 @@ userCtrl.createUser = async (req, res) => {
                 __filename
             });
             res.status(200).json({
-                status: "OK",
+                status: keys.SUCCESSFUL_RESULT,
                 message: "User created"
             });
         });
@@ -209,7 +209,7 @@ userCtrl.userExists = async (req, res) => {
                     __filename
                 });
                 res.status(400).json({
-                    status: "KO",
+                    status: keys.FAIL_RESULT,
                     message: "User does not checked"
                 });
                 return;
@@ -220,7 +220,7 @@ userCtrl.userExists = async (req, res) => {
                     __filename
                 });
                 res.status(200).json({
-                    status: "OK",
+                    status: keys.SUCCESSFUL_RESULT,
                     message: "User exists"
                 });
             } else {
@@ -228,7 +228,7 @@ userCtrl.userExists = async (req, res) => {
                     __filename
                 });
                 res.status(200).json({
-                    status: "NOK",
+                    status: keys.FAIL_RESULT,
                     message: "User does not exists"
                 });
             }
@@ -257,7 +257,7 @@ userCtrl.passwordsMatch = async (req, res) => {
                     __filename
                 });
                 res.status(400).json({
-                    status: "KO",
+                    status: keys.FAIL_RESULT,
                     message: "Passwords do not checked"
                 });
                 return;
@@ -270,7 +270,7 @@ userCtrl.passwordsMatch = async (req, res) => {
                     __filename
                 });
                 res.status(200).json({
-                    status: "OK",
+                    status: keys.SUCCESSFUL_RESULT,
                     message: "Passwords match"
                 });
             } else {
@@ -278,7 +278,7 @@ userCtrl.passwordsMatch = async (req, res) => {
                     __filename
                 });
                 res.status(200).json({
-                    status: "NOK",
+                    status: keys.FAIL_RESULT,
                     message: "Passwords do not match"
                 });
             }
@@ -309,7 +309,7 @@ userCtrl.setInteractedUser = async (req, res) => {
                 return;
             }
             res.status(200).json({
-                status: "OK",
+                status: keys.SUCCESSFUL_RESULT,
                 message: "Data setted"
             });
         });
@@ -340,7 +340,7 @@ userCtrl.reloadInteractedUsers = async (req, res) => {
                 return;
             }
             res.status(200).json({
-                status: "OK",
+                status: keys.SUCCESSFUL_RESULT,
                 message: "Data reloaded"
             });
         });
@@ -371,7 +371,7 @@ userCtrl.addFavourite = async (req, res) => {
                 return;
             }
             res.status(200).json({
-                status: "OK",
+                status: keys.SUCCESSFUL_RESULT,
                 message: "User added to favourites"
             });
         });
@@ -402,7 +402,7 @@ userCtrl.removeFavourite = async (req, res) => {
                 return;
             }
             res.status(200).json({
-                status: "OK",
+                status: keys.SUCCESSFUL_RESULT,
                 message: "User deleted from favourites"
             });
         });
