@@ -8,7 +8,7 @@ const { StringDecoder } = require('string_decoder');
 
 const decoder = new StringDecoder('utf8');
 
-CardCtrl.getCards = async (req, res) => {
+CardCtrl.getCards = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
@@ -44,13 +44,13 @@ CardCtrl.getCards = async (req, res) => {
     }
 };
 
-CardCtrl.getMymyvCards = async (req, res) => {
+CardCtrl.getMymyvCards = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
 
     try {
-        let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, publication_date, (SELECT count(*) FROM comments mc2 WHERE card_id = mc.id) AS comments FROM mymyv_cards mc WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
+        let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, publication_date, (SELECT count(*) FROM mymyv_comments mc2 WHERE card_id = mc.id) AS comments FROM mymyv_cards mc WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
 
         logger.info(`Getting cards for day "${req.params.date}"...`, {
             __filename
@@ -68,6 +68,78 @@ CardCtrl.getMymyvCards = async (req, res) => {
             });
 
             logger.info(`Sending cards...`, {
+                __filename
+            });
+    
+            res.status(200).send(results);
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+};
+
+CardCtrl.getCardComments = (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+
+    try {
+        let query = `SELECT c.id, c.comment, c.instagram, c.publication_date FROM comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
+
+        logger.info(`Getting card comments for card id "${req.params.id_card}"...`, {
+            __filename
+        });
+    
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`An error has ocurred getting the card comments. ${error}`, {
+                    __filename
+                });
+                return;
+            }
+            logger.info(`Card comments obtained: ${results.length}`, {
+                __filename
+            });
+
+            logger.info(`Sending card comments...`, {
+                __filename
+            });
+    
+            res.status(200).send(results);
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+};
+
+CardCtrl.getMymyvCardComments = (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+
+    try {
+        let query = `SELECT c.id, c.comment, c.instagram, c.publication_date FROM mymyv_comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
+
+        logger.info(`Getting mymyv card comments for card id "${req.params.id_card}"...`, {
+            __filename
+        });
+    
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`An error has ocurred getting the mymyv card comments. ${error}`, {
+                    __filename
+                });
+                return;
+            }
+            logger.info(`Mymyv card comments obtained: ${results.length}`, {
+                __filename
+            });
+
+            logger.info(`Sending mymyv card comments...`, {
                 __filename
             });
     
@@ -128,7 +200,7 @@ CardCtrl.createCard = async (req, res) => {
                     __filename
                 });
                 res.status(400).json({
-                    status: "KO",
+                    status: keys.FAIL_RESULT,
                     message: "Card does not created"
                 });
                 return;
@@ -138,7 +210,7 @@ CardCtrl.createCard = async (req, res) => {
                 __filename
             });
             res.status(200).json({
-                status: "OK",
+                status: keys.SUCCESSFUL_RESULT,
                 message: "Card created"
             });
         });
@@ -170,7 +242,7 @@ CardCtrl.createMymyvCard = async (req, res) => {
                     __filename
                 });
                 res.status(400).json({
-                    status: "KO",
+                    status: keys.FAIL_RESULT,
                     message: "Mymyv card does not created"
                 });
                 return;
@@ -180,7 +252,7 @@ CardCtrl.createMymyvCard = async (req, res) => {
                 __filename
             });
             res.status(200).json({
-                status: "OK",
+                status: keys.SUCCESSFUL_RESULT,
                 message: "Mymyv card created"
             });
         });
