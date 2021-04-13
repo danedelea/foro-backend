@@ -16,7 +16,7 @@ const logger =
         transports: [
             new winston.transports.Console(),
             new winston.transports.File({
-                filename: `${__dirname}/../logs/tinder_unizar_logs_${moment().format("DD-MM-YYYY")}.log`
+                filename: `${__dirname}/../logs/${moment().format("MM-YYYY")}/tinder_unizar_logs_${moment().format("DD-MM-YYYY")}.log`
             })
         ]
     });
