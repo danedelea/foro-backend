@@ -19,7 +19,7 @@ CardCtrl.getCards = (req, res) => {
         logger.info(`Getting cards for day "${req.params.date}"...`, {
             __filename
         });
-    
+        
         bbdd.query(query, function (error, results, fields) {
             if (error) {
                 logger.error(`An error has ocurred getting the cards. ${error}`, {
