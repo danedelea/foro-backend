@@ -88,7 +88,7 @@ CardCtrl.getCardComments = (req, res) => {
     try {
         let query = `SELECT c.id, c.comment, c.instagram, c.publication_date FROM comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
 
-        logger.info(`Getting card comments for day "${req.params.date}"...`, {
+        logger.info(`Getting card comments for card id "${req.params.id_card}"...`, {
             __filename
         });
     
@@ -104,6 +104,42 @@ CardCtrl.getCardComments = (req, res) => {
             });
 
             logger.info(`Sending card comments...`, {
+                __filename
+            });
+    
+            res.status(200).send(results);
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+};
+
+CardCtrl.getMymyvCardComments = (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+
+    try {
+        let query = `SELECT c.id, c.comment, c.instagram, c.publication_date FROM mymyv_comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
+
+        logger.info(`Getting mymyv card comments for card id "${req.params.id_card}"...`, {
+            __filename
+        });
+    
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`An error has ocurred getting the mymyv card comments. ${error}`, {
+                    __filename
+                });
+                return;
+            }
+            logger.info(`Mymyv card comments obtained: ${results.length}`, {
+                __filename
+            });
+
+            logger.info(`Sending mymyv card comments...`, {
                 __filename
             });
     
