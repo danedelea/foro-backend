@@ -14,7 +14,7 @@ CardCtrl.getCards = (req, res) => {
     });
 
     try {
-        let query = `SELECT c.id, DATE_FORMAT(STR_TO_DATE(c.date, "%Y-%m-%d"), "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, publication_date, (SELECT count(*) FROM comments c2 WHERE card_id = c.id) AS comments FROM cards c WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
+        let query = `SELECT c.id, DATE_FORMAT(STR_TO_DATE(c.date, "%Y-%m-%d"), "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, c.publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE STR_TO_DATE(substring(c.publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY c.publication_date`;
 
         logger.info(`Getting cards for day "${req.params.date}"...`, {
             __filename
@@ -152,33 +152,6 @@ CardCtrl.getMymyvCardComments = (req, res) => {
     }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 CardCtrl.createCard = async (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
@@ -255,6 +228,124 @@ CardCtrl.createMymyvCard = async (req, res) => {
                 status: keys.SUCCESSFUL_RESULT,
                 message: "Mymyv card created"
             });
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+};
+
+CardCtrl.getStatisticsPlacesAllTime = async (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        let query = `SELECT c.place as title, count(*) AS quantity FROM cards c GROUP BY c.place`;
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Statistics of all time do not getted. ${error}`, {
+                    __filename
+                });
+                return;
+            }
+
+            logger.info(`Statistics of all time getted`, {
+                __filename
+            });
+
+            logger.info(`Sending statistics of all time...`, {
+                __filename
+            });
+    
+            res.status(200).send(results);
+
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+};
+
+CardCtrl.getStatisticsPlacesThirtyDays = async (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        let query = `SELECT c.place as title, count(*) AS quantity FROM cards c WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() GROUP BY c.place`;
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Statistics of thirty days do not getted. ${error}`, {
+                    __filename
+                });
+                return;
+            }
+
+            logger.info(`Statistics of thirty days getted`, {
+                __filename
+            });
+
+            logger.info(`Sending statistics of thirty days...`, {
+                __filename
+            });
+    
+            res.status(200).send(results);
+
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+};
+
+CardCtrl.getStatisticsCardsSevenDays = async (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        let query = `with recursive dates as (
+            select curdate() as dte, 1 as lev
+            union all
+            select dte - interval 1 day, lev + 1
+            from dates
+            where lev < 7
+           )
+      select DATE_FORMAT(d.dte, '%d') AS date, count(c.id) AS cards, count(mc.id) AS mymyv_cards
+      from dates d 
+      left join
+           cards c
+           on c.publicated = 1 and
+              str_to_date(left(c.publication_date, 10), '%d-%m-%Y') >= d.dte and
+              str_to_date(left(c.publication_date, 10), '%d-%m-%Y') < d.dte + interval 1 DAY
+      left join
+           mymyv_cards mc
+           on mc.publicated = 1 and
+              str_to_date(left(mc.publication_date, 10), '%d-%m-%Y') >= d.dte and
+              str_to_date(left(mc.publication_date, 10), '%d-%m-%Y') < d.dte + interval 1 day
+      group by d.dte`;
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Cards of thirty days do not getted. ${error}`, {
+                    __filename
+                });
+                return;
+            }
+
+            logger.info(`Cards of thirty days getted`, {
+                __filename
+            });
+
+            logger.info(`Sending cards of thirty days...`, {
+                __filename
+            });
+    
+            res.status(200).send(results);
+
         });
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
