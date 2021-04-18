@@ -14,5 +14,7 @@ router.get('/getmymyvcardcomments/:id_card', cardsCtrl.getMymyvCardComments);
 router.get('/getstatisticsplacesalltime', cardsCtrl.getStatisticsPlacesAllTime);
 router.get('/getstatisticsplacesthirtydays', cardsCtrl.getStatisticsPlacesThirtyDays);
 router.get('/getstatisticscardssevendays', cardsCtrl.getStatisticsCardsSevenDays);
+router.post('/sendCardComment', cardsCtrl.createComment);
+router.post('/sendMymyvCardComment', cardsCtrl.createMymyvComment);
 
 module.exports = router;

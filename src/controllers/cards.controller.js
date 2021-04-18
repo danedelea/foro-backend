@@ -8,6 +8,8 @@ const { StringDecoder } = require('string_decoder');
 
 const decoder = new StringDecoder('utf8');
 
+const keys = require("../keys");
+
 CardCtrl.getCards = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
@@ -86,7 +88,7 @@ CardCtrl.getCardComments = (req, res) => {
     });
 
     try {
-        let query = `SELECT c.id, c.comment, c.instagram, c.publication_date FROM comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
+        let query = `SELECT c.id, c.comment, c.instagram, substring(c.publication_date, 1, 10) AS publication_date FROM comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
 
         logger.info(`Getting card comments for card id "${req.params.id_card}"...`, {
             __filename
@@ -122,7 +124,7 @@ CardCtrl.getMymyvCardComments = (req, res) => {
     });
 
     try {
-        let query = `SELECT c.id, c.comment, c.instagram, c.publication_date FROM mymyv_comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
+        let query = `SELECT c.id, c.comment, c.instagram, substring(c.publication_date, 1, 10) AS publication_date FROM mymyv_comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
 
         logger.info(`Getting mymyv card comments for card id "${req.params.id_card}"...`, {
             __filename
@@ -346,6 +348,86 @@ CardCtrl.getStatisticsCardsSevenDays = async (req, res) => {
     
             res.status(200).send(results);
 
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+};
+
+CardCtrl.createComment = async (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        var newComment = req.body;
+
+        let query = `INSERT INTO comments(comment, instagram, card_id, publication_date) VALUES("${newComment.comment}", "${newComment.instagram}", "${newComment.card_id}", "${newComment.publication_date}")`;
+
+        logger.info(`Creating comment... Executing query: "${query}"`, {
+            __filename
+        });
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Comment does not created. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Comment does not created"
+                });
+                return;
+            }
+
+            logger.info(`Comment created`, {
+                __filename
+            });
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Comment created"
+            });
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+};
+
+CardCtrl.createMymyvComment = async (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        var newComment = req.body;
+
+        let query = `INSERT INTO mymyv_comments(comment, instagram, card_id, publication_date) VALUES("${newComment.comment}", "${newComment.instagram}", "${newComment.card_id}", "${newComment.publication_date}")`;
+
+        logger.info(`Creating mymyv comment... Executing query: "${query}"`, {
+            __filename
+        });
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Mymyv comment does not created. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Mymyv comment does not created"
+                });
+                return;
+            }
+
+            logger.info(`Mymyv comment created`, {
+                __filename
+            });
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Mymyv comment created"
+            });
         });
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
