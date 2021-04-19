@@ -316,7 +316,7 @@ CardCtrl.getStatisticsCardsSevenDays = async (req, res) => {
             from dates
             where lev < 7
            )
-      select DATE_FORMAT(d.dte, '%d') AS date, count(c.id) AS cards, count(mc.id) AS mymyv_cards
+      select DATE_FORMAT(d.dte, '%d') AS date, count(distinct c.id) AS cards, count(distinct mc.id) AS mymyv_cards
       from dates d 
       left join
            cards c
