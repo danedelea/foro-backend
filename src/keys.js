@@ -7,4 +7,6 @@ module.exports = {
     TOKEN_HEADER: "accesstoken",
     FAIL_RESULT: "NOK",
     SUCCESSFUL_RESULT: "OK",
+    CARD_TYPE_1: "normal",
+    CARD_TYPE_2: "mymyv",
 };

@@ -31,6 +31,11 @@ CardCtrl.getCards = (req, res) => {
                 });
                 return;
             }
+
+            for (const result of results) {
+                result.model_type = keys.CARD_TYPE_1;
+            }
+
             logger.info(`Cards obtained: ${results.length}`, {
                 __filename
             });
@@ -67,6 +72,11 @@ CardCtrl.getMymyvCards = (req, res) => {
                 });
                 return;
             }
+
+            for (const result of results) {
+                result.model_type = keys.CARD_TYPE_2;
+            }
+
             logger.info(`Mymyv cards obtained: ${results.length}`, {
                 __filename
             });
@@ -452,18 +462,19 @@ CardCtrl.normalSearch = async (req, res) => {
     });
     try {
         var normalSearch = req.body;
-
         let query = `SELECT c.id, DATE_FORMAT(STR_TO_DATE(c.date, "%Y-%m-%d"), "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, c.publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE`;
 
-        if (normalSearch.date !== "") {
-            query += ` STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") = str_to_date("${normalSearch.date}", "%Y-%m-%d")`;
+        if (normalSearch.date !== "" && normalSearch.date !== null) {
+            query += ` STR_TO_DATE(c.date, "%Y-%m-%d") = str_to_date("${normalSearch.date}", "%Y-%m-%d")`;
         }
-        if (normalSearch.place !== "") {
-            if (normalSearch.date !== "") {
+        if (normalSearch.place !== "" && normalSearch.place !== null) {
+            if (normalSearch.date !== "" && normalSearch.date !== null) {
                 query += " AND";
             }
             query += ` c.place LIKE "${normalSearch.place}"`;
         }
+
+        query += `ORDER BY publication_date`
 
         logger.info(`Searching for "${normalSearch.date}" date and "${normalSearch.place}" place... Executing query...`, {
             __filename
@@ -480,6 +491,10 @@ CardCtrl.normalSearch = async (req, res) => {
             logger.info(`Searching made. Sending results...`, {
                 __filename
             });
+
+            for (const result of results) {
+                result.model_type = keys.CARD_TYPE_1;
+            }
 
             res.status(200).send(results);
 
