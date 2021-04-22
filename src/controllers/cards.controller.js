@@ -4,7 +4,9 @@ const crypt = require('./crypt.controller');
 const bbdd = require("../database");
 const logger = require("../libs/winston");
 var moment = require('moment');
-const { StringDecoder } = require('string_decoder');
+const {
+    StringDecoder
+} = require('string_decoder');
 
 const decoder = new StringDecoder('utf8');
 
@@ -21,7 +23,7 @@ CardCtrl.getCards = (req, res) => {
         logger.info(`Getting cards for day "${req.params.date}"...`, {
             __filename
         });
-        
+
         bbdd.query(query, function (error, results, fields) {
             if (error) {
                 logger.error(`An error has ocurred getting the cards. ${error}`, {
@@ -36,7 +38,7 @@ CardCtrl.getCards = (req, res) => {
             logger.info(`Sending cards...`, {
                 __filename
             });
-    
+
             res.status(200).send(results);
         });
     } catch (error) {
@@ -54,10 +56,10 @@ CardCtrl.getMymyvCards = (req, res) => {
     try {
         let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, publication_date, (SELECT count(*) FROM mymyv_comments mc2 WHERE card_id = mc.id) AS comments FROM mymyv_cards mc WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
 
-        logger.info(`Getting cards for day "${req.params.date}"...`, {
+        logger.info(`Getting cards for day "${req.params.date}"... `, {
             __filename
         });
-    
+
         bbdd.query(query, function (error, results, fields) {
             if (error) {
                 logger.error(`An error has ocurred getting the mymyv cards. ${error}`, {
@@ -72,7 +74,7 @@ CardCtrl.getMymyvCards = (req, res) => {
             logger.info(`Sending cards...`, {
                 __filename
             });
-    
+
             res.status(200).send(results);
         });
     } catch (error) {
@@ -90,10 +92,10 @@ CardCtrl.getCardComments = (req, res) => {
     try {
         let query = `SELECT c.id, c.comment, c.instagram, substring(c.publication_date, 1, 10) AS publication_date FROM comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
 
-        logger.info(`Getting card comments for card id "${req.params.id_card}"...`, {
+        logger.info(`Getting card comments for card id "${req.params.id_card}"... Executing query: + ${query}`, {
             __filename
         });
-    
+
         bbdd.query(query, function (error, results, fields) {
             if (error) {
                 logger.error(`An error has ocurred getting the card comments. ${error}`, {
@@ -108,7 +110,7 @@ CardCtrl.getCardComments = (req, res) => {
             logger.info(`Sending card comments...`, {
                 __filename
             });
-    
+
             res.status(200).send(results);
         });
     } catch (error) {
@@ -126,10 +128,10 @@ CardCtrl.getMymyvCardComments = (req, res) => {
     try {
         let query = `SELECT c.id, c.comment, c.instagram, substring(c.publication_date, 1, 10) AS publication_date FROM mymyv_comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
 
-        logger.info(`Getting mymyv card comments for card id "${req.params.id_card}"...`, {
+        logger.info(`Getting mymyv card comments for card id "${req.params.id_card}"... Executing query: + ${query}`, {
             __filename
         });
-    
+
         bbdd.query(query, function (error, results, fields) {
             if (error) {
                 logger.error(`An error has ocurred getting the mymyv card comments. ${error}`, {
@@ -144,7 +146,7 @@ CardCtrl.getMymyvCardComments = (req, res) => {
             logger.info(`Sending mymyv card comments...`, {
                 __filename
             });
-    
+
             res.status(200).send(results);
         });
     } catch (error) {
@@ -160,10 +162,8 @@ CardCtrl.createCard = async (req, res) => {
     });
     try {
         var newCard = req.body;
-        newCard.publication_date = moment().format("DD-MM-YYYY HH:mm:ss");
-        newCard.publicated = 0;
 
-        let query = `INSERT INTO cards(date, time, place, instagram, description, publicated, publication_date) VALUES("${newCard.date}", "${newCard.time}", "${newCard.place}", "${newCard.instagram}", "${newCard.description}", "${newCard.publicated}", "${newCard.publication_date}")`;
+        let query = `INSERT INTO cards(date, time, place, instagram, description, publicated) VALUES("${newCard.date}", "${newCard.time}", "${newCard.place}", "${newCard.instagram}", "${newCard.description}", "${newCard.publicated}")`;
 
         logger.info(`Creating card... Executing query: "${query}"`, {
             __filename
@@ -202,10 +202,8 @@ CardCtrl.createMymyvCard = async (req, res) => {
     });
     try {
         var newMymyvCard = req.body;
-        newMymyvCard.publication_date = moment().format("DD-MM-YYYY HH:mm:ss");
-        newMymyvCard.publicated = 0;
 
-        let query = `INSERT INTO mymyv_cards(age, kind, look_for, instagram, description, publicated, publication_date) VALUES("${newMymyvCard.age}", "${newMymyvCard.kind}", "${newMymyvCard.look_for}", "${newMymyvCard.instagram}", "${newMymyvCard.description}", "${newMymyvCard.publicated}", "${newMymyvCard.publication_date}")`;
+        let query = `INSERT INTO mymyv_cards(age, kind, look_for, instagram, description, publicated) VALUES("${newMymyvCard.age}", "${newMymyvCard.kind}", "${newMymyvCard.look_for}", "${newMymyvCard.instagram}", "${newMymyvCard.description}", "${newMymyvCard.publicated}")`;
 
         logger.info(`Creating mymyv card... Executing query: "${query}"`, {
             __filename
@@ -244,6 +242,10 @@ CardCtrl.getStatisticsPlacesAllTime = async (req, res) => {
     });
     try {
         let query = `SELECT c.place as title, count(*) AS quantity FROM cards c GROUP BY c.place`;
+        
+        logger.info(`Gettins all time places statistics... Executing query: "${query}"`, {
+            __filename
+        });
 
         bbdd.query(query, function (error, results, fields) {
             if (error) {
@@ -260,7 +262,7 @@ CardCtrl.getStatisticsPlacesAllTime = async (req, res) => {
             logger.info(`Sending statistics of all time...`, {
                 __filename
             });
-    
+
             res.status(200).send(results);
 
         });
@@ -278,6 +280,10 @@ CardCtrl.getStatisticsPlacesThirtyDays = async (req, res) => {
     try {
         let query = `SELECT c.place as title, count(*) AS quantity FROM cards c WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() GROUP BY c.place`;
 
+        logger.info(`Executing query...`, {
+            __filename
+        });
+
         bbdd.query(query, function (error, results, fields) {
             if (error) {
                 logger.error(`Statistics of thirty days do not getted. ${error}`, {
@@ -293,7 +299,7 @@ CardCtrl.getStatisticsPlacesThirtyDays = async (req, res) => {
             logger.info(`Sending statistics of thirty days...`, {
                 __filename
             });
-    
+
             res.status(200).send(results);
 
         });
@@ -330,6 +336,10 @@ CardCtrl.getStatisticsCardsSevenDays = async (req, res) => {
               str_to_date(left(mc.publication_date, 10), '%d-%m-%Y') < d.dte + interval 1 day
       group by d.dte`;
 
+      logger.info(`Executing query...`, {
+        __filename
+    });
+
         bbdd.query(query, function (error, results, fields) {
             if (error) {
                 logger.error(`Cards of thirty days do not getted. ${error}`, {
@@ -345,7 +355,7 @@ CardCtrl.getStatisticsCardsSevenDays = async (req, res) => {
             logger.info(`Sending cards of thirty days...`, {
                 __filename
             });
-    
+
             res.status(200).send(results);
 
         });
@@ -429,6 +439,52 @@ CardCtrl.createMymyvComment = async (req, res) => {
                 message: "Mymyv comment created"
             });
         });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+};
+
+CardCtrl.normalSearch = async (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        var normalSearch = req.body;
+
+        let query = `SELECT c.id, DATE_FORMAT(STR_TO_DATE(c.date, "%Y-%m-%d"), "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, c.publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE`;
+
+        if (normalSearch.date !== "") {
+            query += ` STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") = str_to_date("${normalSearch.date}", "%Y-%m-%d")`;
+        }
+        if (normalSearch.place !== "") {
+            if (normalSearch.date !== "") {
+                query += " AND";
+            }
+            query += ` c.place LIKE "${normalSearch.place}"`;
+        }
+
+        logger.info(`Searching for "${normalSearch.date}" date and "${normalSearch.place}" place... Executing query...`, {
+            __filename
+        });
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Searching does not made. ${error}`, {
+                    __filename
+                });
+                return;
+            }
+
+            logger.info(`Searching made. Sending results...`, {
+                __filename
+            });
+
+            res.status(200).send(results);
+
+        });
+
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
             __filename
