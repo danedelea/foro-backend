@@ -464,11 +464,11 @@ CardCtrl.normalSearch = async (req, res) => {
         var normalSearch = req.body;
         let query = `SELECT c.id, DATE_FORMAT(STR_TO_DATE(c.date, "%Y-%m-%d"), "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, c.publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE`;
 
-        if (normalSearch.date !== null) {
+        if (normalSearch.date !== "") {
             query += ` STR_TO_DATE(c.date, "%Y-%m-%d") = str_to_date("${normalSearch.date}", "%Y-%m-%d")`;
         }
-        if (normalSearch.place !== null) {
-            if (normalSearch.date !== null) {
+        if (normalSearch.place !== "") {
+            if (normalSearch.date !== "") {
                 query += " AND";
             }
             query += ` c.place LIKE "${normalSearch.place}"`;
@@ -523,25 +523,24 @@ CardCtrl.mymyvSearch = async (req, res) => {
             } else if (mymyvSearch.min_age !== null && mymyvSearch.max_age !== null) {
                 query += ` mc.age >= ${mymyvSearch.min_age} && mc.age <= ${mymyvSearch.max_age}`;   
             }
-
         }
 
-        if (mymyvSearch.kind !== null) {
+        if (mymyvSearch.kind !== "") {
             if (mymyvSearch.min_age !== null || mymyvSearch.max_age !== null) {
                 query += " AND";
             }
             query += ` mc.kind like '${mymyvSearch.kind}'`
         }
 
-        if (mymyvSearch.look_for !== null) {
-            if (mymyvSearch.min_age !== null || mymyvSearch.max_age !== null || mymyvSearch.kind !== null) {
+        if (mymyvSearch.look_for !== "") {
+            if (mymyvSearch.min_age !== null || mymyvSearch.max_age !== null || mymyvSearch.kind !== "") {
                 query += " AND";
             }
             query += ` mc.look_for like '${mymyvSearch.look_for}'`
         }
 
-        query += ` ORDER BY mc.publication_date`
-        console.log(query);
+        query += ` ORDER BY mc.publication_date`;
+
         logger.info(`Searching for "${mymyvSearch.max_age}" max age, "${mymyvSearch.min_age}" min age, "${mymyvSearch.kind}" kind and "${mymyvSearch.look_for}" look for... Executing query...`, {
             __filename
         });
@@ -559,7 +558,7 @@ CardCtrl.mymyvSearch = async (req, res) => {
             });
 
             for (const result of results) {
-                result.model_type = keys.CARD_TYPE_1;
+                result.model_type = keys.CARD_TYPE_2;
             }
 
             res.status(200).send(results);
