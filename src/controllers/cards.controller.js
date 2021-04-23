@@ -61,7 +61,7 @@ CardCtrl.getMymyvCards = (req, res) => {
     try {
         let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, publication_date, (SELECT count(*) FROM mymyv_comments mc2 WHERE card_id = mc.id) AS comments FROM mymyv_cards mc WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
 
-        logger.info(`Getting cards for day "${req.params.date}"... `, {
+        logger.info(`Getting mymyv cards for day "${req.params.date}"... `, {
             __filename
         });
 
@@ -81,7 +81,7 @@ CardCtrl.getMymyvCards = (req, res) => {
                 __filename
             });
 
-            logger.info(`Sending cards...`, {
+            logger.info(`Sending mymyv cards...`, {
                 __filename
             });
 
