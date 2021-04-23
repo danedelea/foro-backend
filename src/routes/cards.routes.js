@@ -17,5 +17,6 @@ router.get('/getstatisticscardssevendays', cardsCtrl.getStatisticsCardsSevenDays
 router.post('/sendCardComment', cardsCtrl.createComment);
 router.post('/sendMymyvCardComment', cardsCtrl.createMymyvComment);
 router.post('/normalSearch', cardsCtrl.normalSearch);
+router.post('/mymyvSearch', cardsCtrl.mymyvSearch);
 
 module.exports = router;
