@@ -251,7 +251,7 @@ CardCtrl.getStatisticsPlacesAllTime = async (req, res) => {
         __filename
     });
     try {
-        let query = `SELECT c.place as title, count(*) AS quantity FROM cards c GROUP BY c.place`;
+        let query = `SELECT c.place as title, count(*) AS quantity FROM cards c WHERE c.publicated = 1 GROUP BY c.place`;
 
         logger.info(`Gettins all time places statistics... Executing query: "${query}"`, {
             __filename
@@ -288,7 +288,7 @@ CardCtrl.getStatisticsPlacesThirtyDays = async (req, res) => {
         __filename
     });
     try {
-        let query = `SELECT c.place as title, count(*) AS quantity FROM cards c WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() GROUP BY c.place`;
+        let query = `SELECT c.place as title, count(*) AS quantity FROM cards c WHERE c.publicated = 1 AND c.publication_date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() GROUP BY c.place`;
 
         logger.info(`Executing query...`, {
             __filename
@@ -337,13 +337,13 @@ CardCtrl.getStatisticsCardsSevenDays = async (req, res) => {
       left join
            cards c
            on c.publicated = 1 and
-              str_to_date(left(c.publication_date, 10), '%d-%m-%Y') >= d.dte and
-              str_to_date(left(c.publication_date, 10), '%d-%m-%Y') < d.dte + interval 1 DAY
+              c.publication_date >= d.dte and
+              c.publication_date < d.dte + interval 1 DAY
       left join
            mymyv_cards mc
            on mc.publicated = 1 and
-              str_to_date(left(mc.publication_date, 10), '%d-%m-%Y') >= d.dte and
-              str_to_date(left(mc.publication_date, 10), '%d-%m-%Y') < d.dte + interval 1 day
+              mc.publication_date >= d.dte and
+              mc.publication_date < d.dte + interval 1 day
       group by d.dte`;
 
         logger.info(`Executing query...`, {
