@@ -18,7 +18,7 @@ CardCtrl.getCards = (req, res) => {
     });
 
     try {
-        let query = `SELECT c.id, DATE_FORMAT(STR_TO_DATE(c.date, "%Y-%m-%d"), "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, c.publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE STR_TO_DATE(substring(c.publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY c.publication_date`;
+        let query = `SELECT c.id, DATE_FORMAT(c.date, "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, DATE_FORMAT(c.publication_date, "%d-%m-%Y") AS publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE DATE_FORMAT(c.publication_date, "%d-%m-%Y") LIKE "${req.params.date}" ORDER BY c.publication_date`;
 
         logger.info(`Getting cards for day "${req.params.date}"...`, {
             __filename
@@ -59,7 +59,7 @@ CardCtrl.getMymyvCards = (req, res) => {
     });
 
     try {
-        let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, publication_date, (SELECT count(*) FROM mymyv_comments mc2 WHERE card_id = mc.id) AS comments FROM mymyv_cards mc WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
+        let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, DATE_FORMAT(mc.publication_date, "%d-%m-%Y") AS publication_date, (SELECT count(*) FROM mymyv_comments mc2 WHERE card_id = mc.id) AS comments FROM mymyv_cards mc WHERE DATE_FORMAT(mc.publication_date, "%d-%m-%Y") LIKE "${req.params.date}" ORDER BY publication_date`;
 
         logger.info(`Getting mymyv cards for day "${req.params.date}"... `, {
             __filename
@@ -100,9 +100,8 @@ CardCtrl.getCardComments = (req, res) => {
     });
 
     try {
-        let query = `SELECT c.id, c.comment, c.instagram, substring(c.publication_date, 1, 10) AS publication_date FROM comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
-
-        logger.info(`Getting card comments for card id "${req.params.id_card}"... Executing query: + ${query}`, {
+        let query = `SELECT c.id, c.comment, c.instagram, DATE_FORMAT(c.publication_date, "%d-%m-%Y") AS publication_date FROM comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
+        logger.info(`Getting card comments for card id "${req.params.id_card}"...`, {
             __filename
         });
 
@@ -136,9 +135,9 @@ CardCtrl.getMymyvCardComments = (req, res) => {
     });
 
     try {
-        let query = `SELECT c.id, c.comment, c.instagram, substring(c.publication_date, 1, 10) AS publication_date FROM mymyv_comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
+        let query = `SELECT c.id, c.comment, c.instagram, DATE_FORMAT(c.publication_date, "%d-%m-%Y") AS publication_date FROM mymyv_comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
 
-        logger.info(`Getting mymyv card comments for card id "${req.params.id_card}"... Executing query: + ${query}`, {
+        logger.info(`Getting mymyv card comments for card id "${req.params.id_card}"...`, {
             __filename
         });
 
@@ -288,7 +287,7 @@ CardCtrl.getStatisticsPlacesThirtyDays = async (req, res) => {
         __filename
     });
     try {
-        let query = `SELECT c.place as title, count(*) AS quantity FROM cards c WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() GROUP BY c.place`;
+        let query = `SELECT c.place as title, count(*) AS quantity FROM cards c WHERE c.publication_date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() GROUP BY c.place`;
 
         logger.info(`Executing query...`, {
             __filename
@@ -337,13 +336,13 @@ CardCtrl.getStatisticsCardsSevenDays = async (req, res) => {
       left join
            cards c
            on c.publicated = 1 and
-              str_to_date(left(c.publication_date, 10), '%d-%m-%Y') >= d.dte and
-              str_to_date(left(c.publication_date, 10), '%d-%m-%Y') < d.dte + interval 1 DAY
+              c.publication_date >= d.dte and
+              c.publication_date < d.dte + interval 1 DAY
       left join
            mymyv_cards mc
            on mc.publicated = 1 and
-              str_to_date(left(mc.publication_date, 10), '%d-%m-%Y') >= d.dte and
-              str_to_date(left(mc.publication_date, 10), '%d-%m-%Y') < d.dte + interval 1 day
+              mc.publication_date >= d.dte and
+              mc.publication_date < d.dte + interval 1 day
       group by d.dte`;
 
         logger.info(`Executing query...`, {
@@ -462,10 +461,10 @@ CardCtrl.normalSearch = async (req, res) => {
     });
     try {
         var normalSearch = req.body;
-        let query = `SELECT c.id, DATE_FORMAT(STR_TO_DATE(c.date, "%Y-%m-%d"), "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, c.publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE`;
+        let query = `SELECT c.id, DATE_FORMAT(c.date, "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, c.publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE`;
 
         if (normalSearch.date !== "") {
-            query += ` STR_TO_DATE(c.date, "%Y-%m-%d") = str_to_date("${normalSearch.date}", "%Y-%m-%d")`;
+            query += ` c.date = str_to_date("${normalSearch.date}", "%Y-%m-%d")`;
         }
         if (normalSearch.place !== "") {
             if (normalSearch.date !== "") {
@@ -474,9 +473,11 @@ CardCtrl.normalSearch = async (req, res) => {
             query += ` c.place LIKE "${normalSearch.place}"`;
         }
 
-        query += `ORDER BY DATE_FORMAT(STR_TO_DATE(c.date, "%Y-%m-%d"), "%d-%m-%Y")`;
+        query += ` ORDER BY c.date`;
 
-        logger.info(`Searching for "${normalSearch.date}" date and "${normalSearch.place}" place... Executing query...`, {
+        console.log(query);
+
+        logger.info(`Searching for "${normalSearch.date}" date and "${normalSearch.place}" place... Executing query...}`, {
             __filename
         });
 
@@ -513,7 +514,7 @@ CardCtrl.mymyvSearch = async (req, res) => {
     });
     try {
         var mymyvSearch = req.body;
-        let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, mc.publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = mc.id) AS comments FROM mymyv_cards mc WHERE`;
+        let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, mc.publication_date, (SELECT count(*) FROM mymyv_comments mc2 WHERE mc2.card_id = mc.id) AS comments FROM mymyv_cards mc WHERE`;
 
         if (mymyvSearch.min_age !== null || mymyvSearch.max_age !== null) {
             if(mymyvSearch.min_age !== null && mymyvSearch.max_age === null){
