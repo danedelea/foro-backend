@@ -18,7 +18,7 @@ CardCtrl.getCards = (req, res) => {
     });
 
     try {
-        let query = `SELECT c.id, DATE_FORMAT(STR_TO_DATE(c.date, "%Y-%m-%d"), "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, c.publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE STR_TO_DATE(substring(c.publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY c.publication_date`;
+        let query = `SELECT c.id, DATE_FORMAT(c.date, "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, DATE_FORMAT(c.publication_date, "%d-%m-%Y") AS publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE DATE_FORMAT(c.publication_date, "%d-%m-%Y") LIKE "${req.params.date}" ORDER BY c.publication_date`;
 
         logger.info(`Getting cards for day "${req.params.date}"...`, {
             __filename
@@ -59,7 +59,7 @@ CardCtrl.getMymyvCards = (req, res) => {
     });
 
     try {
-        let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, publication_date, (SELECT count(*) FROM mymyv_comments mc2 WHERE card_id = mc.id) AS comments FROM mymyv_cards mc WHERE STR_TO_DATE(substring(publication_date, 1, 10), "%d-%m-%Y") LIKE STR_TO_DATE("${req.params.date}", "%d-%m-%Y") ORDER BY publication_date`;
+        let query = `SELECT mc.id, mc.age, mc.kind, mc.look_for, mc.instagram, mc.description, DATE_FORMAT(mc.publication_date, "%d-%m-%Y") AS publication_date, (SELECT count(*) FROM mymyv_comments mc2 WHERE card_id = mc.id) AS comments FROM mymyv_cards mc WHERE DATE_FORMAT(mc.publication_date, "%d-%m-%Y") LIKE "${req.params.date}" ORDER BY publication_date`;
 
         logger.info(`Getting mymyv cards for day "${req.params.date}"... `, {
             __filename
