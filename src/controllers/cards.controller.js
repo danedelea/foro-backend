@@ -1,14 +1,7 @@
 const CardCtrl = {};
 
-const crypt = require('./crypt.controller');
 const bbdd = require("../database");
 const logger = require("../libs/winston");
-var moment = require('moment');
-const {
-    StringDecoder
-} = require('string_decoder');
-
-const decoder = new StringDecoder('utf8');
 
 const keys = require("../keys");
 
