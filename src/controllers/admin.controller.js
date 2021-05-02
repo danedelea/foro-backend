@@ -76,7 +76,6 @@ AdminCtrl.getOlderCard = async (req, res) => {
             logger.info(`Older card getted...`, {
                 __filename
             });
-            console.log(results);
             res.status(200).send(results);
         });
     } catch (error) {
@@ -167,33 +166,36 @@ AdminCtrl.acceptMymyvCard = async (req, res) => {
 
 };
 
-AdminCtrl.rejectMessage = async (req, res) => {
+AdminCtrl.rejectCard = async (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
     try {
-        let query = `call get_older_card()`;
+        let query = `DELETE FROM cards WHERE id = ${req.params.card_id}`;
 
-        logger.info(`Getting older card... Executing query: "${query}"`, {
+        logger.info(`Deleting card... Executing query: "${query}"`, {
             __filename
         });
 
         bbdd.query(query, function (error, results, fields) {
             if (error) {
-                logger.error(`Older card does not getted. ${error}`, {
+                logger.error(`Card does not deleted. ${error}`, {
                     __filename
                 });
                 res.status(400).json({
                     status: keys.FAIL_RESULT,
-                    message: "Older card does not getted"
+                    message: "Card does not deleted"
                 });
                 return;
             }
 
-            logger.info(`Older card getted...`, {
+            logger.info(`Card deleted...`, {
                 __filename
             });
-            res.status(200).send(results);
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Card deleted"
+            });
         });
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
@@ -201,6 +203,44 @@ AdminCtrl.rejectMessage = async (req, res) => {
         });
     }
 
+};
+
+AdminCtrl.rejectMymyvCard = async (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        let query = `DELETE FROM mymyv_cards WHERE id = ${req.params.card_id}`;
+
+        logger.info(`Deleting mymyv card... Executing query: "${query}"`, {
+            __filename
+        });
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Mymyv card does not deleted. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Mymyv card does not deleted"
+                });
+                return;
+            }
+
+            logger.info(`Mymyv card deleted...`, {
+                __filename
+            });
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Mymyv card deleted"
+            });
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
 };
 
 module.exports = AdminCtrl;
