@@ -243,4 +243,44 @@ AdminCtrl.rejectMymyvCard = async (req, res) => {
     }
 };
 
+AdminCtrl.updateCardPlace = async (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        
+        let query = `UPDATE cards SET place = '${req.body.place}' WHERE id = ${req.body.id}`;
+
+        logger.info(`Updating card place... Executing query: "${query}"`, {
+            __filename
+        });
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Card does not updated. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Card does not updated"
+                });
+                return;
+            }
+
+            logger.info(`Card updated...`, {
+                __filename
+            });
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Card updated"
+            });
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+
+};
+
 module.exports = AdminCtrl;

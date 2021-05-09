@@ -11,5 +11,6 @@ router.put('/acceptcard', adminCtrl.acceptCard);
 router.put('/acceptmymyvcard', adminCtrl.acceptMymyvCard);
 router.delete('/rejectcard/:card_id', adminCtrl.rejectCard);
 router.delete('/rejectmymyvcard/:card_id', adminCtrl.rejectMymyvCard);
+router.put('/updateCardPlace', adminCtrl.updateCardPlace);
 
 module.exports = router;
