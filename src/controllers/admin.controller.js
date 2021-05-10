@@ -13,9 +13,6 @@ AdminCtrl.createAdmin = async (req, res) => {
     try {
         let admin = req.body;
 
-        admin.name = await crypt.encryptText(admin.name);
-        admin.lastname = await crypt.encryptText(admin.lastname);
-        admin.email = await crypt.encryptText(admin.email);
         admin.password = await crypt.encryptPassword(admin.password);
 
         let query = `INSERT INTO admin(name, lastname, email, password, creation_date, last_update) VALUES("${admin.name}", "${admin.lastname}", "${admin.email}", "${admin.password}", "${admin.creation_date}", "${admin.last_update}");`;
@@ -53,7 +50,7 @@ AdminCtrl.createAdmin = async (req, res) => {
 
 };
 
-AdminCtrl.getOlderCard = async (req, res) => {
+AdminCtrl.getOlderCard = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
@@ -86,7 +83,7 @@ AdminCtrl.getOlderCard = async (req, res) => {
 
 };
 
-AdminCtrl.acceptCard = async (req, res) => {
+AdminCtrl.acceptCard = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
@@ -126,7 +123,7 @@ AdminCtrl.acceptCard = async (req, res) => {
 
 };
 
-AdminCtrl.acceptMymyvCard = async (req, res) => {
+AdminCtrl.acceptMymyvCard = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
@@ -166,7 +163,7 @@ AdminCtrl.acceptMymyvCard = async (req, res) => {
 
 };
 
-AdminCtrl.rejectCard = async (req, res) => {
+AdminCtrl.rejectCard = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
@@ -205,7 +202,7 @@ AdminCtrl.rejectCard = async (req, res) => {
 
 };
 
-AdminCtrl.rejectMymyvCard = async (req, res) => {
+AdminCtrl.rejectMymyvCard = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
@@ -243,7 +240,7 @@ AdminCtrl.rejectMymyvCard = async (req, res) => {
     }
 };
 
-AdminCtrl.updateCardPlace = async (req, res) => {
+AdminCtrl.updateCardPlace = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
@@ -274,6 +271,44 @@ AdminCtrl.updateCardPlace = async (req, res) => {
                 status: keys.SUCCESSFUL_RESULT,
                 message: "Card updated"
             });
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+
+};
+
+AdminCtrl.getAdminData = (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        
+        let query = `SELECT name, lastname, email, DATE_FORMAT(creation_date, "%d-%m-%Y %H:%i:%s") as creation_date, DATE_FORMAT(last_update, "%d-%m-%Y %H:%i:%s") as last_update from admin where email like '${req.params.email}'`;
+
+        logger.info(`Getting admin data...`, {
+            __filename
+        });
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Admin data does not getted. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Admin data does not getted"
+                });
+                return;
+            }
+
+            logger.info(`Admin data getted...`, {
+                __filename
+            });
+            
+            res.status(200).send(results[0]);
         });
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
