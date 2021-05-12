@@ -17,9 +17,9 @@ authCtrl.getToken = async (req, res) => {
         __filename
     });
     try {
-        let uncodeNick = decoder.write(req.params.nick);
-        let query = `SELECT id FROM users WHERE nick = binary '${uncodeNick}'`;
-        logger.info(`Getting id user... Executing query: "${query}"`, {
+        let uncodeEmail = decoder.write(req.params.email);
+        let query = `SELECT id FROM admin WHERE email = binary '${uncodeEmail}'`;
+        logger.info(`Getting id admin... Executing query: "${query}"`, {
             __filename
         });
         // CONNECT
@@ -31,16 +31,16 @@ authCtrl.getToken = async (req, res) => {
                 return;
             }
             if (results.length === 0) {
-                logger.warn(`There isn't a user with the nick '${uncodeNick}'`, {
+                logger.warn(`There isn't a admin with the email '${uncodeEmail}'`, {
                     __filename
                 });
                 res.status(200).json({
                     status: keys.FAIL_RESULT,
-                    message: `There isn't a user with the nick '${uncodeNick}'`
+                    message: `There isn't a admin with the email '${uncodeEmail}'`
                 });
                 return;
             }
-            logger.info(`Getting a token..`, {
+            logger.info(`Getting a token...`, {
                 __filename
             });
             // GET A NEW TOKEN
@@ -91,7 +91,7 @@ authCtrl.verifyTokenExternal = (req, res) => {
         logger.warn(`(External) Token not valid`, {
             __filename
         });
-        res.status(400).json({
+        res.status(401).json({
             status: keys.FAIL_RESULT,
             message: "Invalid token"
         });

@@ -5,13 +5,13 @@ const adminCtrl = require('../controllers/admin.controller');
 const authCtrl = require('../controllers/auth.controller');
 
 // /server/admin
-router.post('/createadmin', adminCtrl.createAdmin);
-router.get('/getoldercard', adminCtrl.getOlderCard);
-router.put('/acceptcard', adminCtrl.acceptCard);
-router.put('/acceptmymyvcard', adminCtrl.acceptMymyvCard);
-router.delete('/rejectcard/:card_id', adminCtrl.rejectCard);
-router.delete('/rejectmymyvcard/:card_id', adminCtrl.rejectMymyvCard);
-router.put('/updateCardPlace', adminCtrl.updateCardPlace);
-router.get('/getadmindata/:email', adminCtrl.getAdminData);
+router.post('/createadmin', authCtrl.verifyTokenInternal, adminCtrl.createAdmin);
+router.get('/getoldercard', authCtrl.verifyTokenInternal, adminCtrl.getOlderCard);
+router.put('/acceptcard', authCtrl.verifyTokenInternal, adminCtrl.acceptCard);
+router.put('/acceptmymyvcard', authCtrl.verifyTokenInternal, adminCtrl.acceptMymyvCard);
+router.delete('/rejectcard/:card_id', authCtrl.verifyTokenInternal, adminCtrl.rejectCard);
+router.delete('/rejectmymyvcard/:card_id', authCtrl.verifyTokenInternal, adminCtrl.rejectMymyvCard);
+router.put('/updateCardPlace', authCtrl.verifyTokenInternal, adminCtrl.updateCardPlace);
+router.get('/getadmindata/:email', authCtrl.verifyTokenInternal, adminCtrl.getAdminData);
 
 module.exports = router;
