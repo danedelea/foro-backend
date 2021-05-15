@@ -138,11 +138,16 @@ authCtrl.verifyTokenInternal = (req, res, next) => {
 
 // METHOD USED BY THE BACKEND TO DECRIPT THE TOKEN
 authCtrl.decriptToken = (token) => {
+    let tokenToDecript = token;
+    if(token.includes("Bearer")){
+        let tokenSplit = token.split(" ");
+        tokenToDecript = tokenSplit[1];
+    }
     logger.info(`Decripting token: ${token}`, {
         __filename
     });
     // SEND THE DECODE TOKEN
-    return jwt.decode(token);
+    return jwt.decode(tokenToDecript);
 };
 
 authCtrl.checkCredentials = (req, res) => {

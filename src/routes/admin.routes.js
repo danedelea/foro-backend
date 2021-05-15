@@ -12,6 +12,6 @@ router.put('/acceptmymyvcard', authCtrl.verifyTokenInternal, adminCtrl.acceptMym
 router.delete('/rejectcard/:card_id', authCtrl.verifyTokenInternal, adminCtrl.rejectCard);
 router.delete('/rejectmymyvcard/:card_id', authCtrl.verifyTokenInternal, adminCtrl.rejectMymyvCard);
 router.put('/updateCardPlace', authCtrl.verifyTokenInternal, adminCtrl.updateCardPlace);
-router.get('/getadmindata/:email', authCtrl.verifyTokenInternal, adminCtrl.getAdminData);
+router.get('/getadmindata', authCtrl.verifyTokenInternal, adminCtrl.getAdminData);
 
 module.exports = router;

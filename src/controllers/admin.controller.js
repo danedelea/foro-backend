@@ -5,6 +5,7 @@ const bbdd = require("../database");
 const logger = require("../libs/winston");
 
 const keys = require("../keys");
+const authCtrl = require('./auth.controller');
 
 AdminCtrl.createAdmin = async (req, res) => {
     logger.info(`Connecting to database...`, {
@@ -285,8 +286,7 @@ AdminCtrl.getAdminData = (req, res) => {
         __filename
     });
     try {
-        
-        let query = `SELECT name, lastname, email, DATE_FORMAT(creation_date, "%d-%m-%Y %H:%i:%s") as creation_date, DATE_FORMAT(last_update, "%d-%m-%Y %H:%i:%s") as last_update from admin where email like '${req.params.email}'`;
+        let query = `SELECT name, lastname, email, DATE_FORMAT(creation_date, "%d-%m-%Y %H:%i:%s") as creation_date, DATE_FORMAT(last_update, "%d-%m-%Y %H:%i:%s") as last_update from admin where id like '${authCtrl.decriptToken(req.headers[keys.TOKEN_HEADER]).id}'`;
 
         logger.info(`Getting admin data...`, {
             __filename
