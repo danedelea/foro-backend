@@ -344,13 +344,13 @@ AdminCtrl.checkEmail = (req, res) => {
 
             if(results[0].cantidad === 0){
                 res.status(200).json({
-                    status: keys.SUCCESSFUL_RESULT,
-                    message: "Email does not exist"
+                    status: keys.FAIL_RESULT,
+                    message: "Email does not exists"
                 });
             } else {
                 res.status(200).json({
-                    status: keys.FAIL_RESULT,
-                    message: "Email exists"
+                    status: keys.SUCCESSFUL_RESULT,
+                    message: "Email exist"
                 });
             }
         });
@@ -526,6 +526,45 @@ AdminCtrl.deleteAdmin = (req, res) => {
             res.status(200).json({
                 status: keys.SUCCESSFUL_RESULT,
                 message: "Admin deleted"
+            });
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+
+};
+
+AdminCtrl.deleteAdminByEmail = (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        let query = `DELETE FROM admin WHERE email = '${req.params.email}'`;
+
+        logger.info(`Deleting admin by email... Executing query: "${query}"`, {
+            __filename
+        });
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Admin does not deleted by email. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Admin does not deleted by email"
+                });
+                return;
+            }
+
+            logger.info(`Admin deleted by email...`, {
+                __filename
+            });
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Admin deleted by email"
             });
         });
     } catch (error) {
