@@ -20,6 +20,7 @@ router.put('/updateCardPlace', authCtrl.verifyTokenInternal, adminCtrl.updateCar
 
 router.delete('/rejectcard/:card_id', authCtrl.verifyTokenInternal, adminCtrl.rejectCard);
 router.delete('/rejectmymyvcard/:card_id', authCtrl.verifyTokenInternal, adminCtrl.rejectMymyvCard);
+router.delete('/deleteadmin', authCtrl.verifyTokenInternal, adminCtrl.deleteAdmin);
 
 
 module.exports = router;

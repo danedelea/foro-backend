@@ -496,4 +496,44 @@ AdminCtrl.updatePassword = async (req, res) => {
 
 };
 
+AdminCtrl.deleteAdmin = (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        let adminId = authCtrl.decriptToken(req.headers[keys.TOKEN_HEADER]).id;
+        let query = `DELETE FROM admin WHERE id = ${adminId}`;
+
+        logger.info(`Deleting admin... Executing query: "${query}"`, {
+            __filename
+        });
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Admin does not deleted. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Admin does not deleted"
+                });
+                return;
+            }
+
+            logger.info(`Admin deleted...`, {
+                __filename
+            });
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Admin deleted"
+            });
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+
+};
+
 module.exports = AdminCtrl;
