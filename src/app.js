@@ -2,7 +2,6 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require("cors");
 const config = require('./keys.js');
-const path = require('path');
 
 const app = express();
 
