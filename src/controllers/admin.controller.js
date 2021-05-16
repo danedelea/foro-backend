@@ -286,7 +286,8 @@ AdminCtrl.getAdminData = (req, res) => {
         __filename
     });
     try {
-        let query = `SELECT name, lastname, email, DATE_FORMAT(creation_date, "%d-%m-%Y %H:%i:%s") as creation_date, DATE_FORMAT(last_update, "%d-%m-%Y %H:%i:%s") as last_update from admin where id like '${authCtrl.decriptToken(req.headers[keys.TOKEN_HEADER]).id}'`;
+        let adminId = authCtrl.decriptToken(req.headers[keys.TOKEN_HEADER]).id;
+        let query = `SELECT name, lastname, email, DATE_FORMAT(creation_date, "%d-%m-%Y %H:%i:%s") as creation_date, DATE_FORMAT(last_update, "%d-%m-%Y %H:%i:%s") as last_update from admin where id like '${adminId}'`;
 
         logger.info(`Getting admin data...`, {
             __filename
@@ -309,6 +310,140 @@ AdminCtrl.getAdminData = (req, res) => {
             });
             
             res.status(200).send(results[0]);
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+
+};
+
+AdminCtrl.updateAdminData = (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        let adminId = authCtrl.decriptToken(req.headers[keys.TOKEN_HEADER]).id;
+        let newAdminInfo = req.body;
+        let query = `UPDATE admin SET name = '${newAdminInfo.name}', lastname = '${newAdminInfo.lastname}', email = '${newAdminInfo.email}' WHERE id like '${adminId}'`;
+
+        logger.info(`Updating admin data... Executing query: ${query}`, {
+            __filename
+        });
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Admin data does not updated. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Admin data does not updated"
+                });
+                return;
+            }
+
+            logger.info(`Admin data updated...`, {
+                __filename
+            });
+            
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Admin data updated"
+            });
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+
+};
+
+AdminCtrl.checkPassword = (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        let adminId = authCtrl.decriptToken(req.headers[keys.TOKEN_HEADER]).id;
+        let query = `SELECT password from admin WHERE id like '${adminId}'`;
+
+        logger.info(`Getting admin password... Executing query: ${query}`, {
+            __filename
+        });
+
+        bbdd.query(query, async function (error, results, fields) {
+            if (error) {
+                logger.error(`Admin password does not checked. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Admin password does not checked"
+                });
+                return;
+            }
+
+            logger.info(`Admin password getted...`, {
+                __filename
+            });
+
+
+            if(await crypt.comparePassword(req.body.password, results[0].password)){
+                res.status(200).json({
+                    status: keys.SUCCESSFUL_RESULT,
+                    message: "Admin password matchs"
+                });
+            } else {
+                res.status(200).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Admin password does not match"
+                });
+            }
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+
+};
+
+AdminCtrl.updatePassword = async (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        let adminId = authCtrl.decriptToken(req.headers[keys.TOKEN_HEADER]).id;
+        let newAdminPassword = await crypt.encryptPassword(req.body.password);
+        let query = `UPDATE admin SET password = '${newAdminPassword}' WHERE id like '${adminId}'`;
+
+        logger.info(`Updating admin password... Executing query: ${query}`, {
+            __filename
+        });
+
+        bbdd.query(query, async function (error, results, fields) {
+            if (error) {
+                logger.error(`Admin password does not updated. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Admin password does not updated"
+                });
+                return;
+            }
+
+            logger.info(`Admin password updated...`, {
+                __filename
+            });
+
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Admin password updated"
+            });
+            
         });
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
