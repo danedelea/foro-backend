@@ -16,6 +16,7 @@ router.get('/getadmindata', authCtrl.verifyTokenInternal, adminCtrl.getAdminData
 router.post('/updateadmindata', authCtrl.verifyTokenInternal, adminCtrl.updateAdminData);
 router.post('/checkpassword', authCtrl.verifyTokenInternal, adminCtrl.checkPassword);
 router.post('/updatepassword', authCtrl.verifyTokenInternal, adminCtrl.updatePassword);
+router.get('/checkemail/:email', authCtrl.verifyTokenInternal, adminCtrl.checkEmail);
 
 
 module.exports = router;

@@ -319,6 +319,49 @@ AdminCtrl.getAdminData = (req, res) => {
 
 };
 
+AdminCtrl.checkEmail = (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        let query = `SELECT count(*) as cantidad FROM admin where email like '${req.params.email}'`;
+
+        logger.info(`Checking email... Executing query: ${query}`, {
+            __filename
+        });
+
+        bbdd.query(query, function (error, results, fields) {
+            if (error) {
+                logger.error(`Email does not checked. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Email does not checked"
+                });
+                return;
+            }
+
+            if(results[0].cantidad === 0){
+                res.status(200).json({
+                    status: keys.SUCCESSFUL_RESULT,
+                    message: "Email does not exist"
+                });
+            } else {
+                res.status(200).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Email exists"
+                });
+            }
+        });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+
+};
+
 AdminCtrl.updateAdminData = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
