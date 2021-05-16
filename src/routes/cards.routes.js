@@ -4,8 +4,6 @@ const router = Router();
 const cardsCtrl = require('../controllers/cards.controller');
 
 // /server/cards
-router.post('/createcard', cardsCtrl.createCard);
-router.post('/createmymyvcard', cardsCtrl.createMymyvCard);
 router.get('/getcards/:date', cardsCtrl.getCards);
 router.get('/getmymyvcards/:date', cardsCtrl.getMymyvCards);
 router.get('/getcardcomments/:id_card', cardsCtrl.getCardComments);
@@ -13,6 +11,9 @@ router.get('/getmymyvcardcomments/:id_card', cardsCtrl.getMymyvCardComments);
 router.get('/getstatisticsplacesalltime', cardsCtrl.getStatisticsPlacesAllTime);
 router.get('/getstatisticsplacesthirtydays', cardsCtrl.getStatisticsPlacesThirtyDays);
 router.get('/getstatisticscardssevendays', cardsCtrl.getStatisticsCardsSevenDays);
+
+router.post('/createcard', cardsCtrl.createCard);
+router.post('/createmymyvcard', cardsCtrl.createMymyvCard);
 router.post('/sendCardComment', cardsCtrl.createComment);
 router.post('/sendMymyvCardComment', cardsCtrl.createMymyvComment);
 router.post('/normalSearch', cardsCtrl.normalSearch);
