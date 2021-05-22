@@ -345,12 +345,12 @@ AdminCtrl.checkEmail = (req, res) => {
             if(results[0].cantidad === 0){
                 res.status(200).json({
                     status: keys.FAIL_RESULT,
-                    message: "Email does not exists"
+                    message: "Email does not exist"
                 });
             } else {
                 res.status(200).json({
                     status: keys.SUCCESSFUL_RESULT,
-                    message: "Email exist"
+                    message: "Email exists"
                 });
             }
         });
