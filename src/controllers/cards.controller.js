@@ -3,7 +3,7 @@ const CardCtrl = {};
 const bbdd = require("../database");
 const logger = require("../libs/winston");
 
-const keys = require("../keys");
+const keys = require("../config/keys");
 
 CardCtrl.getCards = (req, res) => {
     logger.info(`Connecting to database...`, {

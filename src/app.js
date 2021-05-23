@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require("cors");
-const config = require('./keys.js');
+const config = require('./config/keys.js');
 
 const app = express();
 

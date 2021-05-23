@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const crypto = require('crypto');
-const config = require('../keys.js');
+const config = require('../config/keys.js');
 
 const bcryptCtrl = {
     async encryptPassword(password) {

@@ -4,8 +4,9 @@ const crypt = require('./crypt.controller');
 const bbdd = require("../database");
 const logger = require("../libs/winston");
 
-const keys = require("../keys");
+const keys = require("../config/keys");
 const authCtrl = require('./auth.controller');
+const mailer = require('../config/mailer');
 
 AdminCtrl.createAdmin = async (req, res) => {
     logger.info(`Connecting to database...`, {
@@ -567,6 +568,101 @@ AdminCtrl.deleteAdminByEmail = (req, res) => {
                 message: "Admin deleted by email"
             });
         });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+
+};
+
+AdminCtrl.recoveryPassword = (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+        
+          
+          var mailOptions = {
+            from: 'tinder.unizar.help@gmail.com',
+            to: 'juangracia9211@gmail.com',
+            subject: 'Password recovery',
+            html: `
+            <html lang="en">
+            
+            <head>
+              <meta charset="utf-8">
+              <base href="/">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <style>           
+                .container {
+                  border: 2px gray solid;
+                  border-radius: 15px;
+                  padding: 3em;
+                }
+            
+                .title {
+                  color: #ff6666;
+                  margin-top: 0;
+                }
+            
+                .subtitle {
+                  color: #6d6d6d;
+                }
+            
+                .text-password {
+                  color: black;
+                }
+            
+                .text-new-password {
+                  color: #6d6d6d;
+                }
+            
+                hr {
+                  border: none;
+                  background-color: #6d6d6d;
+                  height: 2px;
+                  margin: 2em 0;
+                  border-radius: 50px;
+                }
+            
+                .div-info {
+                  margin-top: 2em;
+                  color: #6d6d6d;
+                }
+              </style>
+            </head>
+            
+            <body>
+              <div class="container">
+                <h1 class="title">Recuperaci&oacute;n de contrase&ntilde;a</h1>
+                <h2 class="subtitle">Se ha generado una nueva contrase&ntilde;a para tu cuenta.</h2>
+                <h3 class="text-password">Tu contrase&ntilde;a actual es:</h3>
+                <div class="text-new-password">Contrase&ntilde;a</div>
+                <hr/>
+                <div class="div-info"><small> <em> Este correo se ha generado de forma autom&aacute;tica, por favor, no
+                      respondas porque no te llegar&aacute; ninguna respuesta </em>😀. <br /><br />Con cari&ntilde;o, el equipo de
+                    <em>Tinder Unizar</em>. </small></div>
+              </div>
+            </body>
+            
+            </html>`
+          };
+          
+          mailer.transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                res.status(200).json({
+                    status: keys.SUCCESSFUL_RESULT,
+                    message: "Email does not sent"
+                });
+            } else {
+                res.status(200).json({
+                    status: keys.SUCCESSFUL_RESULT,
+                    message: 'Email sent: ' + info.response
+                });
+            }
+          });
+          
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
             __filename

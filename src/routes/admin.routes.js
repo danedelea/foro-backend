@@ -8,6 +8,7 @@ const authCtrl = require('../controllers/auth.controller');
 router.get('/getoldercard', authCtrl.verifyTokenInternal, adminCtrl.getOlderCard);
 router.get('/getadmindata', authCtrl.verifyTokenInternal, adminCtrl.getAdminData);
 router.get('/checkemail/:email', authCtrl.verifyTokenInternal, adminCtrl.checkEmail);
+router.get('/resetPassword', adminCtrl.recoveryPassword);
 
 router.post('/createadmin', authCtrl.verifyTokenInternal, adminCtrl.createAdmin);
 router.post('/updateadmindata', authCtrl.verifyTokenInternal, adminCtrl.updateAdminData);
