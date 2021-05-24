@@ -247,7 +247,7 @@ AdminCtrl.updateCardPlace = (req, res) => {
         __filename
     });
     try {
-        
+
         let query = `UPDATE cards SET place = '${req.body.place}' WHERE id = ${req.body.id}`;
 
         logger.info(`Updating card place... Executing query: "${query}"`, {
@@ -309,7 +309,7 @@ AdminCtrl.getAdminData = (req, res) => {
             logger.info(`Admin data getted...`, {
                 __filename
             });
-            
+
             res.status(200).send(results[0]);
         });
     } catch (error) {
@@ -343,7 +343,7 @@ AdminCtrl.checkEmail = (req, res) => {
                 return;
             }
 
-            if(results[0].cantidad === 0){
+            if (results[0].cantidad === 0) {
                 res.status(200).json({
                     status: keys.FAIL_RESULT,
                     message: "Email does not exist"
@@ -391,7 +391,7 @@ AdminCtrl.updateAdminData = (req, res) => {
             logger.info(`Admin data updated...`, {
                 __filename
             });
-            
+
             res.status(200).json({
                 status: keys.SUCCESSFUL_RESULT,
                 message: "Admin data updated"
@@ -434,7 +434,7 @@ AdminCtrl.checkPassword = (req, res) => {
             });
 
 
-            if(await crypt.comparePassword(req.body.password, results[0].password)){
+            if (await crypt.comparePassword(req.body.password, results[0].password)) {
                 res.status(200).json({
                     status: keys.SUCCESSFUL_RESULT,
                     message: "Admin password matchs"
@@ -487,7 +487,7 @@ AdminCtrl.updatePassword = async (req, res) => {
                 status: keys.SUCCESSFUL_RESULT,
                 message: "Admin password updated"
             });
-            
+
         });
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
@@ -581,9 +581,9 @@ AdminCtrl.recoveryPassword = (req, res) => {
         __filename
     });
     try {
-        
-          
-          var mailOptions = {
+
+
+        var mailOptions = {
             from: 'tinder.unizar.help@gmail.com',
             to: 'juangracia9211@gmail.com',
             subject: 'Password recovery',
@@ -632,24 +632,25 @@ AdminCtrl.recoveryPassword = (req, res) => {
                 }
               </style>
             </head>
-            
             <body>
+            <div>
               <div class="container">
                 <h1 class="title">Recuperaci&oacute;n de contrase&ntilde;a</h1>
                 <h2 class="subtitle">Se ha generado una nueva contrase&ntilde;a para tu cuenta.</h2>
                 <h3 class="text-password">Tu contrase&ntilde;a actual es:</h3>
-                <div class="text-new-password">Contrase&ntilde;a</div>
+                <div class="text-new-password">
+                    ME SHAMO RICARDOOOOOOOOO</div>
                 <hr/>
-                <div class="div-info"><small> <em> Este correo se ha generado de forma autom&aacute;tica, por favor, no
-                      respondas porque no te llegar&aacute; ninguna respuesta </em>😀. <br /><br />Con cari&ntilde;o, el equipo de
-                    <em>Tinder Unizar</em>. </small></div>
+                <div class="div-info"><small> <i> Este correo se ha generado de forma autom&aacute;tica, por favor, no
+                      respondas porque no te llegar&aacute; ninguna respuesta </i>♥.<br /><br/>Con cari&ntilde;o, el equipo de
+                    <i>Tinder Unizar</i>. </small></div>
+                </div>
               </div>
             </body>
-            
             </html>`
-          };
-          
-          mailer.transporter.sendMail(mailOptions, function(error, info){
+        };
+
+        mailer.transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 res.status(200).json({
                     status: keys.SUCCESSFUL_RESULT,
@@ -661,8 +662,8 @@ AdminCtrl.recoveryPassword = (req, res) => {
                     message: 'Email sent: ' + info.response
                 });
             }
-          });
-          
+        });
+
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
             __filename
