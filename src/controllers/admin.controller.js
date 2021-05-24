@@ -577,7 +577,7 @@ AdminCtrl.deleteAdminByEmail = (req, res) => {
 
 };
 
-AdminCtrl.recoveryPassword = (req, res) => {
+AdminCtrl.recoveryPassword = async (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
@@ -587,14 +587,43 @@ AdminCtrl.recoveryPassword = (req, res) => {
             length: 20,
             numbers: true
         });
+        let encryptedPassword = await crypt.encryptPassword(newPassword);
+        let email = req.params.email;
 
+        let query = `UPDATE admin SET password = '${encryptedPassword}' WHERE email like '${email}'`;
+
+        logger.info(`Updating email password... Executing query: ${query}`, {
+            __filename
+        });
+
+        bbdd.query(query, async function (error, results, fields) {
+            if (error) {
+                logger.error(`Email password does not updated. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Email password does not updated"
+                });
+                return;
+            }
+
+            logger.info(`Email password updated...`, {
+                __filename
+            });
+
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Email password updated"
+            });
+
+        });
         
-        console.log(keys.PASSWORD);
         keys.PASSWORD = newPassword;
         var mailOptions = {
-            from: 'tinder.unizar.help@gmail.com',
-            to: 'juangracia9211@gmail.com',
-            subject: 'No reply - Password recovery',
+            from: keys.TINDER_UNIZAR_EMAIL,
+            to: email,
+            subject: keys.SUBJECT,
             html: keys.MESSAGE
         };
 
