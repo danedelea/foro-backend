@@ -4,8 +4,10 @@ const crypt = require('./crypt.controller');
 const bbdd = require("../database");
 const logger = require("../libs/winston");
 
-const keys = require("../keys");
+const keys = require("../config/keys");
 const authCtrl = require('./auth.controller');
+const mailer = require('../config/mailer');
+const generator = require('generate-password');
 
 AdminCtrl.createAdmin = async (req, res) => {
     logger.info(`Connecting to database...`, {
@@ -246,7 +248,7 @@ AdminCtrl.updateCardPlace = (req, res) => {
         __filename
     });
     try {
-        
+
         let query = `UPDATE cards SET place = '${req.body.place}' WHERE id = ${req.body.id}`;
 
         logger.info(`Updating card place... Executing query: "${query}"`, {
@@ -308,7 +310,7 @@ AdminCtrl.getAdminData = (req, res) => {
             logger.info(`Admin data getted...`, {
                 __filename
             });
-            
+
             res.status(200).send(results[0]);
         });
     } catch (error) {
@@ -342,7 +344,7 @@ AdminCtrl.checkEmail = (req, res) => {
                 return;
             }
 
-            if(results[0].cantidad === 0){
+            if (results[0].cantidad === 0) {
                 res.status(200).json({
                     status: keys.FAIL_RESULT,
                     message: "Email does not exist"
@@ -390,7 +392,7 @@ AdminCtrl.updateAdminData = (req, res) => {
             logger.info(`Admin data updated...`, {
                 __filename
             });
-            
+
             res.status(200).json({
                 status: keys.SUCCESSFUL_RESULT,
                 message: "Admin data updated"
@@ -433,7 +435,7 @@ AdminCtrl.checkPassword = (req, res) => {
             });
 
 
-            if(await crypt.comparePassword(req.body.password, results[0].password)){
+            if (await crypt.comparePassword(req.body.password, results[0].password)) {
                 res.status(200).json({
                     status: keys.SUCCESSFUL_RESULT,
                     message: "Admin password matchs"
@@ -486,7 +488,7 @@ AdminCtrl.updatePassword = async (req, res) => {
                 status: keys.SUCCESSFUL_RESULT,
                 message: "Admin password updated"
             });
-            
+
         });
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
@@ -567,6 +569,78 @@ AdminCtrl.deleteAdminByEmail = (req, res) => {
                 message: "Admin deleted by email"
             });
         });
+    } catch (error) {
+        logger.error(`An error has ocurred connecting to database: ${error}`, {
+            __filename
+        });
+    }
+
+};
+
+AdminCtrl.recoveryPassword = async (req, res) => {
+    logger.info(`Connecting to database...`, {
+        __filename
+    });
+    try {
+
+        let newPassword = generator.generate({
+            length: 20,
+            numbers: true
+        });
+        let encryptedPassword = await crypt.encryptPassword(newPassword);
+        let email = req.params.email;
+
+        let query = `UPDATE admin SET password = '${encryptedPassword}' WHERE email like '${email}'`;
+
+        logger.info(`Updating email password... Executing query: ${query}`, {
+            __filename
+        });
+
+        bbdd.query(query, async function (error, results, fields) {
+            if (error) {
+                logger.error(`Email password does not updated. ${error}`, {
+                    __filename
+                });
+                res.status(400).json({
+                    status: keys.FAIL_RESULT,
+                    message: "Email password does not updated"
+                });
+                return;
+            }
+
+            logger.info(`Email password updated...`, {
+                __filename
+            });
+
+            res.status(200).json({
+                status: keys.SUCCESSFUL_RESULT,
+                message: "Email password updated"
+            });
+
+        });
+        
+        keys.PASSWORD = newPassword;
+        var mailOptions = {
+            from: keys.TINDER_UNIZAR_EMAIL,
+            to: email,
+            subject: keys.SUBJECT,
+            html: keys.MESSAGE
+        };
+
+        mailer.transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                res.status(200).json({
+                    status: keys.SUCCESSFUL_RESULT,
+                    message: "Email does not sent"
+                });
+            } else {
+                res.status(200).json({
+                    status: keys.SUCCESSFUL_RESULT,
+                    message: 'Email sent: ' + info.response
+                });
+            }
+        });
+
     } catch (error) {
         logger.error(`An error has ocurred connecting to database: ${error}`, {
             __filename

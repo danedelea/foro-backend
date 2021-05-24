@@ -3,7 +3,7 @@ const authCtrl = {};
 const crypt = require('./crypt.controller');
 const jwt = require("jsonwebtoken");
 const bbdd = require("../database");
-const keys = require("../keys");
+const keys = require("../config/keys");
 const logger = require("../libs/winston");
 
 const {

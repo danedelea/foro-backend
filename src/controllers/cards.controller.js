@@ -3,7 +3,7 @@ const CardCtrl = {};
 const bbdd = require("../database");
 const logger = require("../libs/winston");
 
-const keys = require("../keys");
+const keys = require("../config/keys");
 
 CardCtrl.getCards = (req, res) => {
     logger.info(`Connecting to database...`, {
@@ -165,6 +165,7 @@ CardCtrl.createCard = async (req, res) => {
     });
     try {
         var newCard = req.body;
+        console.log(newCard);
 
         let query = `INSERT INTO cards(date, time, place, instagram, description, sending_date, publicated) VALUES("${newCard.date}", "${newCard.time}", "${newCard.place}", "${newCard.instagram}", "${newCard.description}", "${newCard.sending_date}", "${newCard.publicated}")`;
 
