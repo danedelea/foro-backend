@@ -459,7 +459,7 @@ CardCtrl.normalSearch = async (req, res) => {
         let query = `SELECT c.id, DATE_FORMAT(c.date, "%d-%m-%Y") as date, c.time, c.place, c.instagram, c.description, c.publication_date, (SELECT count(*) FROM comments c2 WHERE c2.card_id = c.id) AS comments FROM cards c WHERE c.publicated = 1`;
 
         if (normalSearch.date !== "") {
-            query += ` AND c.date = str_to_date("${normalSearch.date}", "%Y-%m-%d")`;
+            query += ` AND date_format(c.date, "%Y-%m-%d") = str_to_date("${normalSearch.date}", "%Y-%m-%d")`;
         }
         if (normalSearch.place !== "") {
             query += ` AND c.place LIKE "${normalSearch.place}"`;
