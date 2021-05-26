@@ -93,9 +93,9 @@ CardCtrl.getCardComments = (req, res) => {
     });
 
     try {
-        let query = `SELECT c.id, c.comment, c.instagram, substring(c.publication_date, 1, 10) AS publication_date FROM comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
+        let query = `SELECT c.id, c.comment, c.instagram, DATE_FORMAT(publication_date, '%d-%m-%Y') AS publication_date  FROM comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
 
-        logger.info(`Getting card comments for card id "${req.params.id_card}"... Executing query: + ${query}`, {
+        logger.info(`Getting card comments for card id "${req.params.id_card}"...`, {
             __filename
         });
 
@@ -129,9 +129,9 @@ CardCtrl.getMymyvCardComments = (req, res) => {
     });
 
     try {
-        let query = `SELECT c.id, c.comment, c.instagram, substring(c.publication_date, 1, 10) AS publication_date FROM mymyv_comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
+        let query = `SELECT c.id, c.comment, c.instagram, DATE_FORMAT(publication_date, '%d-%m-%Y') AS publication_date FROM mymyv_comments c WHERE c.card_id = ${req.params.id_card} ORDER BY publication_date`;
 
-        logger.info(`Getting mymyv card comments for card id "${req.params.id_card}"... Executing query: + ${query}`, {
+        logger.info(`Getting mymyv card comments for card id "${req.params.id_card}"...`, {
             __filename
         });
 
