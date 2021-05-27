@@ -126,36 +126,36 @@ AdminCtrl.acceptCard = (req, res) => {
 
 };
 
-AdminCtrl.acceptMymyvCard = (req, res) => {
+AdminCtrl.acceptPeopleCard = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
     try {
-        let query = `UPDATE mymyv_cards SET publicated = 1, publication_date = '${req.body.current_date}' WHERE id = ${req.body.card_id}`;
+        let query = `UPDATE people_cards SET publicated = 1, publication_date = '${req.body.current_date}' WHERE id = ${req.body.card_id}`;
 
-        logger.info(`Accepted mymyv card... Executing query: "${query}"`, {
+        logger.info(`Accepted people card... Executing query: "${query}"`, {
             __filename
         });
 
         bbdd.query(query, function (error, results, fields) {
             if (error) {
-                logger.error(`Mymyv card does not accepted. ${error}`, {
+                logger.error(`People card does not accepted. ${error}`, {
                     __filename
                 });
                 res.status(400).json({
                     status: keys.FAIL_RESULT,
-                    message: "Mymyv card does not accepted"
+                    message: "People card does not accepted"
                 });
                 return;
             }
 
-            logger.info(`Mymyv card accepted...`, {
+            logger.info(`People card accepted...`, {
                 __filename
             });
 
             res.status(200).json({
                 status: keys.SUCCESSFUL_RESULT,
-                message: "Mymyv card accepted"
+                message: "People card accepted"
             });
         });
     } catch (error) {
@@ -205,35 +205,35 @@ AdminCtrl.rejectCard = (req, res) => {
 
 };
 
-AdminCtrl.rejectMymyvCard = (req, res) => {
+AdminCtrl.rejectPeopleCard = (req, res) => {
     logger.info(`Connecting to database...`, {
         __filename
     });
     try {
-        let query = `DELETE FROM mymyv_cards WHERE id = ${req.params.card_id}`;
+        let query = `DELETE FROM people_cards WHERE id = ${req.params.card_id}`;
 
-        logger.info(`Deleting mymyv card... Executing query: "${query}"`, {
+        logger.info(`Deleting people card... Executing query: "${query}"`, {
             __filename
         });
 
         bbdd.query(query, function (error, results, fields) {
             if (error) {
-                logger.error(`Mymyv card does not deleted. ${error}`, {
+                logger.error(`People card does not deleted. ${error}`, {
                     __filename
                 });
                 res.status(400).json({
                     status: keys.FAIL_RESULT,
-                    message: "Mymyv card does not deleted"
+                    message: "People card does not deleted"
                 });
                 return;
             }
 
-            logger.info(`Mymyv card deleted...`, {
+            logger.info(`People card deleted...`, {
                 __filename
             });
             res.status(200).json({
                 status: keys.SUCCESSFUL_RESULT,
-                message: "Mymyv card deleted"
+                message: "People card deleted"
             });
         });
     } catch (error) {

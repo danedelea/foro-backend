@@ -8,7 +8,7 @@ module.exports = {
     FAIL_RESULT: "NOK",
     SUCCESSFUL_RESULT: "OK",
     CARD_TYPE_1: "normal",
-    CARD_TYPE_2: "mymyv",
+    CARD_TYPE_2: "people",
     PASSWORD: null || 'no password',
     get MESSAGE () { 
         return `

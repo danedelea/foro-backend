@@ -16,11 +16,11 @@ router.post('/checkpassword', authCtrl.verifyTokenInternal, adminCtrl.checkPassw
 router.post('/updatepassword', authCtrl.verifyTokenInternal, adminCtrl.updatePassword);
 
 router.put('/acceptcard', authCtrl.verifyTokenInternal, adminCtrl.acceptCard);
-router.put('/acceptmymyvcard', authCtrl.verifyTokenInternal, adminCtrl.acceptMymyvCard);
+router.put('/acceptpeoplecard', authCtrl.verifyTokenInternal, adminCtrl.acceptPeopleCard);
 router.put('/updateCardPlace', authCtrl.verifyTokenInternal, adminCtrl.updateCardPlace);
 
 router.delete('/rejectcard/:card_id', authCtrl.verifyTokenInternal, adminCtrl.rejectCard);
-router.delete('/rejectmymyvcard/:card_id', authCtrl.verifyTokenInternal, adminCtrl.rejectMymyvCard);
+router.delete('/rejectpeoplecard/:card_id', authCtrl.verifyTokenInternal, adminCtrl.rejectPeopleCard);
 router.delete('/deleteadmin', authCtrl.verifyTokenInternal, adminCtrl.deleteAdmin);
 router.delete('/deleteadminbyemail/:email', authCtrl.verifyTokenInternal, adminCtrl.deleteAdminByEmail);
 
