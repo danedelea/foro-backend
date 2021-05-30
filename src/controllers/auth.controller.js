@@ -193,7 +193,7 @@ authCtrl.checkCredentials = (req, res) => {
                     });
                 }
             } else {
-                res.status(400).json({
+                res.status(200).json({
                     status: keys.FAIL_RESULT,
                     message: "Email does not match"
                 });

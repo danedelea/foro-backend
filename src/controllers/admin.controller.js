@@ -8,6 +8,7 @@ const keys = require("../config/keys");
 const authCtrl = require('./auth.controller');
 const mailer = require('../config/mailer');
 const generator = require('generate-password');
+const moment = require('moment');
 
 AdminCtrl.createAdmin = async (req, res) => {
     logger.info(`Connecting to database...`, {
@@ -371,7 +372,8 @@ AdminCtrl.updateAdminData = (req, res) => {
     try {
         let adminId = authCtrl.decriptToken(req.headers[keys.TOKEN_HEADER]).id;
         let newAdminInfo = req.body;
-        let query = `UPDATE admin SET name = '${newAdminInfo.name}', lastname = '${newAdminInfo.lastname}', email = '${newAdminInfo.email}' WHERE id like '${adminId}'`;
+        let currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
+        let query = `UPDATE admin SET name = '${newAdminInfo.name}', lastname = '${newAdminInfo.lastname}', email = '${newAdminInfo.email}', last_update = '${currentDate}' WHERE id like ${adminId}`;
 
         logger.info(`Updating admin data... Executing query: ${query}`, {
             __filename
@@ -462,7 +464,10 @@ AdminCtrl.updatePassword = async (req, res) => {
     try {
         let adminId = authCtrl.decriptToken(req.headers[keys.TOKEN_HEADER]).id;
         let newAdminPassword = await crypt.encryptPassword(req.body.password);
-        let query = `UPDATE admin SET password = '${newAdminPassword}' WHERE id like '${adminId}'`;
+
+        let currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
+
+        let query = `UPDATE admin SET password = '${newAdminPassword}', last_update = '${currentDate}' WHERE id like '${adminId}'`;
 
         logger.info(`Updating admin password... Executing query: ${query}`, {
             __filename
@@ -621,7 +626,7 @@ AdminCtrl.recoveryPassword = async (req, res) => {
         
         keys.PASSWORD = newPassword;
         var mailOptions = {
-            from: keys.TINDER_UNIZAR_EMAIL,
+            from: keys.PEOPLE_FINDER_EMAIL,
             to: email,
             subject: keys.SUBJECT,
             html: keys.MESSAGE
@@ -629,6 +634,7 @@ AdminCtrl.recoveryPassword = async (req, res) => {
 
         mailer.transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
+                console.log("hola");
                 res.status(200).json({
                     status: keys.SUCCESSFUL_RESULT,
                     message: "Email does not sent"

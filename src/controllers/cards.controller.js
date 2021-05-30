@@ -282,7 +282,7 @@ CardCtrl.getStatisticsPlacesThirtyDays = async (req, res) => {
         __filename
     });
     try {
-        let query = `SELECT c.place as title, count(*) AS quantity FROM cards c WHERE c.publicated = 1 AND c.publication_date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() GROUP BY c.place`;
+        let query = `SELECT c.place as title, count(*) AS quantity FROM cards c WHERE c.publicated = 1 AND DATE_FORMAT(c.publication_date, '%Y-%m-%d') BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() GROUP BY c.place`;
 
         logger.info(`Executing query...`, {
             __filename

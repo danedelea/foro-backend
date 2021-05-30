@@ -6,8 +6,8 @@ module.exports = {
         port: '465',
         secure: true,
         auth: {
-          user: 'tinder.unizar.help@gmail.com',
-          pass: 'mtwmkikqdwzdsjuo'
+          user: 'help.people.finder@gmail.com',
+          pass: 'hqbfxueelrgtfuvn'
         }
       })
 };
