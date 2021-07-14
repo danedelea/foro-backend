@@ -12,3 +12,5 @@ El flujo de utilización de los diferentes endpoints es la siguientes:
 ---
 
 Para lanzar el servidor se hace mediante el comando de ***npm run dev***.
+
+Compartido por github
